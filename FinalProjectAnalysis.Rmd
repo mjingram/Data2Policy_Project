@@ -1,0 +1,564 @@
+---
+title: "FinalProjectAnalysis"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Load and Clean Data
+
+```{r , results='hide'}
+houseDat<-read.csv("housingreduced.csv")
+houseDat=houseDat[,-1]
+## Fill Missing Crime incidents with mean of crime incidents.
+for(i in 1:length(houseDat$Crime.Incidents)){
+  
+if(is.na(houseDat[i,52])==TRUE){
+  houseDat[i,52]=mean(houseDat$Crime.Incidents, na.rm=TRUE)
+  
+}}
+
+## Change People in poverty to propiortion of total population
+povPropCol<-houseDat$Persons_in_Poverty/houseDat$Total_Population
+houseDat<-cbind(houseDat, povPropCol)
+houseDat$Persons_in_Poverty<-NULL
+
+hist(povPropCol)
+
+## One Person Households to proportion
+One_Person_House_Prop<-houseDat$One_Person_Households/houseDat$Total_Population
+houseDat<-cbind(houseDat, One_Person_House_Prop)
+houseDat$One_Person_Households<-NULL
+
+## Adults non English Speaking to proportion
+Adults_Non_English_Speaking_Prop<-houseDat$Adults_Non_English_Speaking/houseDat$Total_Population
+houseDat<-cbind(houseDat, Adults_Non_English_Speaking_Prop)
+houseDat$Adults_Non_English_Speaking<-NULL
+
+## Births to Teen Mothers to proportion
+Births_to_Teen_Mom_Prop<-houseDat$Births_to_Teen_Mothers_19_and_under/houseDat$Total_Population
+houseDat<-cbind(houseDat, Births_to_Teen_Mom_Prop)
+houseDat$Births_to_Teen_Mothers_19_and_under<-NULL
+
+## Births to Unwed Mother to proportion
+Births_to_Unwed_Mom_Prop<-houseDat$Births_to_Unwed_Mothers/houseDat$Total_Population
+houseDat<-cbind(houseDat, Births_to_Unwed_Mom_Prop)
+houseDat$Births_to_Unwed_Mothers<-NULL
+
+## Births to Women Less than 12th grade education to proportion
+Births_to_Women_LessThan12thGradeEdu_Prop<-houseDat$Births_to_Women_With_Less_Than_12th_Grade_Education/houseDat$Total_Population
+houseDat<-cbind(houseDat, Births_to_Women_LessThan12thGradeEdu_Prop)
+houseDat$Births_to_Women_With_Less_Than_12th_Grade_Education<-NULL
+
+## Children Living with Single Parents to proportion
+Children_Living_With_SingleParentProp<-houseDat$Children_Living_with_Single_Parents/houseDat$Total_Population
+houseDat<-cbind(houseDat, Children_Living_With_SingleParentProp)
+houseDat$Children_Living_with_Single_Parents<-NULL
+
+## Families with Children as a proportion of households
+Families_With_Children_Prop<-houseDat$Families_with_Children/houseDat$Households
+houseDat<-cbind(houseDat, Families_With_Children_Prop)
+houseDat$Families_with_Children<-NULL
+
+## Families w/o children as a proportion of households
+Families_WithOut_Children_Prop<-houseDat$Families_without_Children/houseDat$Households
+houseDat<-cbind(houseDat, Families_WithOut_Children_Prop)
+houseDat$Families_without_Children<-NULL
+
+## Foreign Born to proportion
+Foreign_Born_Prop<-houseDat$Foreign_Born/houseDat$Total_Population
+houseDat<-cbind(houseDat, Foreign_Born_Prop)
+houseDat$Foreign_Born<-NULL
+
+## Households w/ income more than 125k to prop
+Households_W_Income_more_than_125k_Prop<-houseDat$Households_with_Income_more_than_USD_125000/houseDat$Households
+houseDat<-cbind(houseDat, Households_W_Income_more_than_125k_Prop)
+houseDat$Households_with_Income_more_than_USD_125000<-NULL
+
+## Households w/ income less than 60k to prop
+Households_W_Income_less_than_60k_Prop<-houseDat$Households_with_Income_less_than_USD_60000/houseDat$Households
+houseDat<-cbind(houseDat, Households_W_Income_less_than_60k_Prop)
+houseDat$Households_with_Income_less_than_USD_60000<-NULL
+
+## Households w/ income less than 60k to prop
+Households_W_Income_between_60k_And_125k_Prop<-houseDat$Households_with_Income_USD_60000_to_USD_124999/houseDat$Households
+houseDat<-cbind(houseDat, Households_W_Income_between_60k_And_125k_Prop)
+houseDat$Households_with_Income_USD_60000_to_USD_124999<-NULL
+
+## Housing Vacancy as proportion of housing units
+Housing_Vacancy_Prop<-houseDat$Housing_Vacancy/houseDat$Housing_Units
+houseDat<-cbind(houseDat, Housing_Vacancy_Prop)
+houseDat$Housing_Vacancy<-NULL
+
+## Multi Family Units as proportion of housing units
+Multifamiliy_Units_Prop<-houseDat$Multi_Family_Units/houseDat$Housing_Units
+houseDat<-cbind(houseDat, Multifamiliy_Units_Prop)
+houseDat$Multi_Family_Units<-NULL
+
+## Overcrowded housing Units as proportion of housing units
+Overcrowded_housing_Units_Prop<-houseDat$Overcrowded_housing_units/houseDat$Housing_Units
+houseDat<-cbind(houseDat, Overcrowded_housing_Units_Prop)
+houseDat$Overcrowded_housing_units<-NULL
+
+## PeopleOver25 with College Associates or Better to proportion
+PeopleOver25_with_College_Associates_Prop<-houseDat$Persons_Age_25_with_College_Degree_Associates_or_Better/houseDat$Total_Population
+houseDat<-cbind(houseDat, PeopleOver25_with_College_Associates_Prop)
+houseDat$Persons_Age_25_with_College_Degree_Associates_or_Better<-NULL
+
+## PeopleOver25 with high school only to proportion
+PeopleOver25_with_highschool_only_Prop<-houseDat$Persons_age_25_with_high_school_only_education/houseDat$Total_Population
+houseDat<-cbind(houseDat, PeopleOver25_with_highschool_only_Prop)
+houseDat$Persons_age_25_with_high_school_only_education<-NULL
+
+## PeopleOver25 with less than 12th grade edu to proportion
+PeopleOver25_with_lessThan12thGradeEdu_Prop<-houseDat$Persons_age_25_with_less_than_12th_grade_education/houseDat$Total_Population
+houseDat<-cbind(houseDat, PeopleOver25_with_lessThan12thGradeEdu_Prop)
+houseDat$Persons_age_25_with_less_than_12th_grade_education<-NULL
+
+## PeopleOver25 with some College No Degree to proportion
+PeopleOver25_with_someCollegeNoDegree_Prop<-houseDat$Persons_age_25_with_some_college_but_no_degree/houseDat$Total_Population
+houseDat<-cbind(houseDat, PeopleOver25_with_someCollegeNoDegree_Prop)
+houseDat$Persons_age_25_with_some_college_but_no_degree<-NULL
+
+## Population Age columns to Proportion
+popAgeDf<-matrix(0,nrow = 264, ncol = 6)
+PopNamesCol<-c("Population_18_24_prop","Population_25_34_prop","Population_35_44_prop","Population_45_54_prop","Population_5_17_prop", "Population_55_64_prop" )
+for (i in 4:9) {
+  popAgeDf[,(i-3)]<-houseDat[,i]/houseDat$Total_Population
+  
+}
+popAgeDf<-as.data.frame(popAgeDf)
+names(popAgeDf)<-PopNamesCol
+houseDat<-cbind(houseDat, popAgeDf)
+houseDat$Population_18_24<-NULL
+houseDat$Population_25_34<-NULL
+houseDat$Population_35_44<-NULL
+houseDat$Population_45_54<-NULL
+houseDat$Population_55_64<-NULL
+houseDat$Population_5_17<-NULL
+
+
+## Population Race columns to Proportion
+popRaceDf<-matrix(0,nrow = 264, ncol = 11)
+PopRaceCol<-c("Population_African_American_prop", "Population_Asian_per_Pacific_Islander_prop", "Population_Latino_prop", "Population_Native_American_prop", "Population_Non_Latino_prop", "Population_Non_Latino_White_prop", "Population_Other_Race_Single_Race_Selected_prop", "Population_White_prop", "Population_of_2_or_More_Races_prop", "Population_over_65_prop", "Population_under_5_prop")
+for (i in 4:14) {
+  popRaceDf[,(i-3)]<-houseDat[,i]/houseDat$Total_Population
+  
+}
+popRaceDf<-as.data.frame(popRaceDf)
+names(popRaceDf)<-PopRaceCol
+houseDat<-cbind(houseDat, popRaceDf)
+houseDat$Population_African_American<-NULL
+houseDat$Population_Asian_per_Pacific_Islander<-NULL
+houseDat$Population_Latino<-NULL
+houseDat$Population_Native_American<-NULL
+houseDat$Population_Non_Latino<-NULL
+houseDat$Population_Non_Latino_White<-NULL
+houseDat$Population_Other_Race_Single_Race_Selected<-NULL
+houseDat$Population_White<-NULL
+houseDat$Population_of_2_or_More_Races<-NULL
+houseDat$Population_over_65<-NULL
+houseDat$Population_under_5<-NULL
+
+## Single Family Units as proportion of housing units
+SingleFamily_Units_Prop<-houseDat$Single_Family_Units/houseDat$Housing_Units
+houseDat<-cbind(houseDat, SingleFamily_Units_Prop)
+houseDat$Single_Family_Units<-NULL
+
+## Renters Spending More Than 30% income on Housingas prop of total households
+Renters_Spending_MoreThan30Perc_of_Income_on_housing_Prop<-houseDat$Renters_Spending_More_Than_30Percent_of_Income_on_Housing/houseDat$Households
+houseDat<-cbind(houseDat, Renters_Spending_MoreThan30Perc_of_Income_on_housing_Prop)
+houseDat$Renters_Spending_More_Than_30Percent_of_Income_on_Housing<-NULL
+
+
+## Single Mothers w. Children in Poverty to proportion
+SingleMom_w_Children_inPoverty_Prop<-houseDat$Single_Mothers_with_Children_in_Poverty/houseDat$Total_Population
+houseDat<-cbind(houseDat, SingleMom_w_Children_inPoverty_Prop)
+houseDat$Single_Mothers_with_Children_in_Poverty<-NULL
+
+## Unemployed and Births to proportion of total pop
+birthDf<-matrix(0,nrow = 264, ncol = 7)
+birthCol<-c("Unemployed_in_Civilian_Labor_Force_prop", "Births_African_American_prop", "Births_Asian_per_Pacific_Islander_prop","Births_Latino_prop", "Births_Native_American_prop", "Births_Non_Latino_White_prop", "Births_Other_Race_prop") 
+for (i in 5:11) {
+  birthDf[,(i-4)]<-houseDat[,i]/houseDat$Total_Population
+  
+}
+birthDf<-as.data.frame(birthDf)
+names(birthDf)<-birthCol
+houseDat<-cbind(houseDat, birthDf)
+houseDat$Unemployed_in_Civilian_Labor_Force<-NULL
+houseDat$Births_African_American<-NULL
+houseDat$Births_Asian_per_Pacific_Islander<-NULL
+houseDat$Births_Latino<-NULL
+houseDat$Births_Native_American<-NULL
+houseDat$Births_Non_Latino_White<-NULL
+houseDat$Births_Other_Race<-NULL
+
+## Look for NAs
+for (i in 1:52) {print(which(is.na(houseDat[,i])))}
+## Rows 182 and 78 were Nan remove them
+houseDat<-houseDat[-182,]
+houseDat<-houseDat[-78,]
+
+## Train Test Split
+set.seed(123) # Set Seed so that same sample can be reproduced in future 
+# Now Selecting 75% of data as sample from total 'n' rows of the data  
+smp_siz = floor(0.75*nrow(houseDat))  # creates a value for dividing the data into train and test. In this case the value is defined as 75% of the number of rows in the dataset
+smp_siz 
+train_ind = sample(seq_len(nrow(houseDat)),size = smp_siz)
+Train =houseDat[train_ind,] #creates the training dataset 
+Test=houseDat[-train_ind,] # creates the testing data set
+
+## Create standardized version of the data set
+Train.Std<-scale(Train)
+Train.Std<-as.data.frame(Train.Std)
+Test.Std<-scale(Test)
+Test.Std<-as.data.frame(Test.Std)
+## check to make sure standardized
+colMeans(Test.Std)
+colMeans(Train.Std)
+apply(Train.Std, 2, sd)
+apply(Test.Std, 2, sd)
+
+## Check Data Types
+for (i in 1:52) {
+  print(typeof(Train.Std[,i]))
+}
+for (i in 1:52) {
+  print(typeof(Train.Std[,i]))
+}
+```
+
+## Linear Regression, Initial Fit, Collinearity and Diagnostics
+
+```{r, results='hide'}
+mod1<-lm(povPropCol~., Train.Std)
+## Removing NA columns becuase of singularities in lm
+
+## Remove Singularities: Population of 2 or more races, Population over 65, Pop under 5, households w/ income between 60k and 125k, Population Non Latino
+mod1<-lm(povPropCol~.-Households_W_Income_between_60k_And_125k_Prop  -Population_Non_Latino_prop -Population_of_2_or_More_Races_prop -Population_over_65_prop -Population_under_5_prop, Train.Std)
+mod1.Sum<-summary(mod1)
+
+## Save standardized train data set without singularities
+Train2.Std<-Train.Std
+Train2.Std$Households_W_Income_between_60k_And_125k_Prop<-NULL
+Train2.Std$Population_Non_Latino_prop<-NULL
+Train2.Std$Population_of_2_or_More_Races_prop<-NULL
+Train2.Std$Population_over_65_prop<-NULL
+Train2.Std$Population_under_5_prop<-NULL
+
+Test2.Std<-Test.Std
+Test2.Std$Households_W_Income_between_60k_And_125k_Prop<-NULL
+Test2.Std$Population_Non_Latino_prop<-NULL
+Test2.Std$Population_of_2_or_More_Races_prop<-NULL
+Test2.Std$Population_over_65_prop<-NULL
+Test2.Std$Population_under_5_prop<-NULL
+
+## Check for Collinearity
+library(car)
+vif(mod1)
+## There is high collinearity among many of the predictors predictors
+
+## See what AIC step wise selection will remove
+library(MASS)
+stepAIC(mod1, direction="backward")
+
+## StepAIC backward selection suggested variables
+mod2<-lm(formula = povPropCol ~ Households + Persons_per_Household + 
+    Total_Population + One_Person_House_Prop + Families_With_Children_Prop + 
+    Families_WithOut_Children_Prop + Foreign_Born_Prop + Households_W_Income_less_than_60k_Prop + 
+    Housing_Vacancy_Prop + Multifamiliy_Units_Prop + Overcrowded_housing_Units_Prop + 
+    PeopleOver25_with_College_Associates_Prop + PeopleOver25_with_highschool_only_Prop + 
+    PeopleOver25_with_lessThan12thGradeEdu_Prop + PeopleOver25_with_someCollegeNoDegree_Prop + 
+    Population_18_24_prop + Population_25_34_prop + Population_35_44_prop + 
+    Population_45_54_prop + Population_5_17_prop + Population_55_64_prop + 
+    Population_Native_American_prop + Population_Non_Latino_White_prop + 
+    SingleFamily_Units_Prop + Renters_Spending_MoreThan30Perc_of_Income_on_housing_Prop + 
+    SingleMom_w_Children_inPoverty_Prop + Unemployed_in_Civilian_Labor_Force_prop + 
+    Births_African_American_prop + Births_Asian_per_Pacific_Islander_prop + 
+    Births_Latino_prop + Births_Non_Latino_White_prop, data = Train.Std)
+stepAIC(mod1, direction="both")
+## StepAIC both direction selection variables (same as backward)
+
+## Save variables not thrown out as Train3.Std
+Train3.Std = subset(Train2.Std, select = c(Households,                    Persons_per_Household, Total_Population,                                  One_Person_House_Prop, Families_With_Children_Prop,                              Families_WithOut_Children_Prop, Foreign_Born_Prop,                                 Households_W_Income_less_than_60k_Prop, Housing_Vacancy_Prop,                      Multifamiliy_Units_Prop, Overcrowded_housing_Units_Prop,         PeopleOver25_with_College_Associates_Prop,        PeopleOver25_with_highschool_only_Prop,     PeopleOver25_with_lessThan12thGradeEdu_Prop,         PeopleOver25_with_someCollegeNoDegree_Prop, Population_18_24_prop,                   Population_25_34_prop, Population_35_44_prop,                                  Population_45_54_prop, Population_5_17_prop,                                    Population_55_64_prop, Population_Native_American_prop,                         Population_Non_Latino_White_prop, SingleFamily_Units_Prop,                         Renters_Spending_MoreThan30Perc_of_Income_on_housing_Prop, SingleMom_w_Children_inPoverty_Prop, Unemployed_in_Civilian_Labor_Force_prop,        Births_African_American_prop, Births_Asian_per_Pacific_Islander_prop, Births_Latino_prop, Births_Non_Latino_White_prop, povPropCol))
+
+Test3.Std = subset(Test2.Std, select = c(Households,                    Persons_per_Household, Total_Population,                                  One_Person_House_Prop, Families_With_Children_Prop,                              Families_WithOut_Children_Prop, Foreign_Born_Prop,                                 Households_W_Income_less_than_60k_Prop, Housing_Vacancy_Prop,                      Multifamiliy_Units_Prop, Overcrowded_housing_Units_Prop,         PeopleOver25_with_College_Associates_Prop,        PeopleOver25_with_highschool_only_Prop,     PeopleOver25_with_lessThan12thGradeEdu_Prop,         PeopleOver25_with_someCollegeNoDegree_Prop, Population_18_24_prop,                   Population_25_34_prop, Population_35_44_prop,                                  Population_45_54_prop, Population_5_17_prop,                                    Population_55_64_prop, Population_Native_American_prop,                         Population_Non_Latino_White_prop, SingleFamily_Units_Prop,                         Renters_Spending_MoreThan30Perc_of_Income_on_housing_Prop, SingleMom_w_Children_inPoverty_Prop, Unemployed_in_Civilian_Labor_Force_prop,        Births_African_American_prop, Births_Asian_per_Pacific_Islander_prop, Births_Latino_prop, Births_Non_Latino_White_prop, povPropCol))
+summary(mod2)
+vif(mod2)
+
+## Correlation Plot
+library(corrplot)
+
+correlTrain<-Train
+numcolnames<-seq(1, 52)
+colnames(correlTrain)=numcolnames
+
+correlat<-cor(correlTrain)
+
+corrplot::corrplot(correlat, type = "upper", order = "hclust", 
+         tl.col = "black", tl.cex = 0.8, cl.cex=0.8)
+
+
+## Remove High VIF one at a time by highest vif number
+mod2 <- update(mod2, . ~ . - PeopleOver25_with_College_Associates_Prop)
+VifNums<-vif(mod2)
+VifNums
+VifNums<-sort(VifNums, decreasing = TRUE)
+VifNums[1]
+
+mod2 <- update(mod2, . ~ . - Total_Population)
+VifNums<-vif(mod2)
+VifNums
+VifNums<-sort(VifNums, decreasing = TRUE)
+VifNums[1]
+
+mod2<- update(mod2, . ~ . - Multifamiliy_Units_Prop)
+VifNums<-vif(mod2)
+VifNums
+VifNums<-sort(VifNums, decreasing = TRUE)
+VifNums[1]
+
+mod2<- update(mod2, . ~ . - Population_Non_Latino_White_prop)
+VifNums<-vif(mod2)
+VifNums
+VifNums<-sort(VifNums, decreasing = TRUE)
+VifNums[1]
+
+mod2<- update(mod2, . ~ . - Persons_per_Household)
+VifNums<-vif(mod2)
+VifNums
+VifNums<-sort(VifNums, decreasing = TRUE)
+VifNums[1]
+
+mod2<- update(mod2, . ~ . - Households_W_Income_less_than_60k_Prop)
+VifNums<-vif(mod2)
+VifNums
+VifNums<-sort(VifNums, decreasing = TRUE)
+VifNums[1]
+
+mod2<- update(mod2, . ~ . - One_Person_House_Prop)
+VifNums<-vif(mod2)
+VifNums
+VifNums<-sort(VifNums, decreasing = TRUE)
+VifNums[1]
+
+mod2<- update(mod2, . ~ . - PeopleOver25_with_lessThan12thGradeEdu_Prop)
+VifNums<-vif(mod2)
+VifNums
+VifNums<-sort(VifNums, decreasing = TRUE)
+VifNums[1]
+
+mod2<- update(mod2, . ~ . - Population_5_17_prop)
+VifNums<-vif(mod2)
+VifNums
+VifNums<-sort(VifNums, decreasing = TRUE)
+VifNums[1]
+
+## All VIFs now under 10
+
+summary(mod2)
+
+## Rerun step AIC
+stepAIC(mod2, direction = "backward")
+
+## new model of suggested variables
+mod3<-lm(formula = povPropCol ~ Families_With_Children_Prop + Families_WithOut_Children_Prop + 
+    Housing_Vacancy_Prop + Overcrowded_housing_Units_Prop + PeopleOver25_with_someCollegeNoDegree_Prop + 
+    Population_18_24_prop + SingleFamily_Units_Prop + Renters_Spending_MoreThan30Perc_of_Income_on_housing_Prop + 
+    SingleMom_w_Children_inPoverty_Prop + Births_Non_Latino_White_prop, 
+    data = Train.Std)
+summary(mod3)
+
+## Cross Validation
+library(caret)
+cv_10fold = trainControl(method = "cv", number = 10)
+f1 = formula(mod1, data=Train)
+f2 = formula(mod3, data=Train)
+modela = train(f1, data = Train, trControl = cv_10fold, 
+               method = "lm")
+modelb = train(f2, data = Train, trControl = cv_10fold, 
+               method = "lm")
+print(modela) # full, 10-fold
+print(modelb) # reduced, 10-fold
+
+
+## All variables in mod3 are significant
+## Saving remaining varibles as Train4.Std and Test4.Std
+Train4.Std<-subset(Train.Std, select = c(Families_With_Children_Prop,               Families_WithOut_Children_Prop, Housing_Vacancy_Prop,             Overcrowded_housing_Units_Prop, PeopleOver25_with_someCollegeNoDegree_Prop, Population_18_24_prop, SingleFamily_Units_Prop,                         Renters_Spending_MoreThan30Perc_of_Income_on_housing_Prop, SingleMom_w_Children_inPoverty_Prop, Births_Non_Latino_White_prop, povPropCol))
+
+Test4.Std<-subset(Test.Std, select = c(Families_With_Children_Prop,               Families_WithOut_Children_Prop, Housing_Vacancy_Prop,             Overcrowded_housing_Units_Prop, PeopleOver25_with_someCollegeNoDegree_Prop, Population_18_24_prop, SingleFamily_Units_Prop,                         Renters_Spending_MoreThan30Perc_of_Income_on_housing_Prop, SingleMom_w_Children_inPoverty_Prop, Births_Non_Latino_White_prop, povPropCol))
+
+## Checking structure
+residualPlots(mod3)
+crPlots(mod3)
+ceresPlots(mod3)
+
+## Plots look good except there might be some outliers/influence points
+
+## More Diagnostics
+plot(mod3)
+## observation 59 and 227 as a possible problem in all 4 plots
+## 227 and 59 cross the dashed cook's distance line so there are worth investigating
+outlierTest(mod3)
+## Test if outliers are leverage points
+h <- hatvalues(mod3)
+sum(h)
+
+influencePlot(mod3)
+
+influenceIndexPlot(mod3)
+## both 59 and 227 appear to be influential
+##Note the row names are not the same as the row, so row 59 is not named 59 becuase of sampling for train, test
+## Row Name 59 and Row Name 227 are the points in question
+Train4.Std["59",]
+Train["59",]
+Train4.Std["227",]
+Train["227",]
+
+## Removing Influential Outliers 227 and 59 to see what happens
+rownames(Train4.Std)[c(180, 93)]->remove
+
+
+Train5.Std<-Train4.Std[!rownames(Train4.Std) %in% remove, ]
+
+## Now Refit and check diagnostics
+mod4<-lm(formula = povPropCol ~ .,  data = Train5.Std)
+vif(mod4)
+plot(mod4)
+influencePlot(mod4)
+influenceIndexPlot(mod4)
+## Still not perfect but now none of the observations are outside cooks D bands in plots and not influential
+
+## Housing Vacany no longer significant after influential points are removed
+
+Train5.Std$Housing_Vacancy_Prop<-NULL
+Test5.Std<-Test4.Std
+Test5.Std$Housing_Vacancy_Prop<-NULL
+mod4<-lm(formula = povPropCol ~ .,  data = Train5.Std)
+summary(mod4)
+vif(mod4)
+
+residualPlots(mod4)
+crPlots(mod4)
+ceresPlots(mod4)
+
+qqnorm(mod4$residuals)
+plot(mod4)
+durbinWatsonTest(mod4)
+
+```
+
+
+## Prediction for OLS
+```{r, results='hide'}
+set.seed(123)
+yTest<-Test5.Std$povPropCol
+lmod.pred<-predict(mod4, Test5.Std)
+lmod.MSE=mean((lmod.pred-yTest)^2)
+
+library(tidyverse)
+library(caret)
+predictions <- mod4 %>% predict(Test5.Std)
+lmod.results=data.frame(
+  R2 = caret::R2(predictions, Test5.Std$povPropCol),
+  RMSE = RMSE(predictions, Test5.Std$povPropCol),
+  MSE = (RMSE(predictions, Test5.Std$povPropCol)^2),
+  MAE = MAE(predictions, Test5.Std$povPropCol)
+)
+colnames(lmod.results)<-c("R2","RMSE", "MSE", "MAE")
+```
+
+
+## Ridge Regression
+```{r, results='hide'}
+set.seed(123)
+library(glmnet)
+grid=10^seq(10,-2,length=100)
+xTrain.Full=model.matrix(povPropCol~.,Train.Std)[,-1]
+yTrain.Full=Train.Std$povPropCol
+xTest.Full=model.matrix(povPropCol~.,Test.Std)[,-1]
+yTest.Full=Test.Std$povPropCol
+## Cross Validate to find the best lambda tuning parameter
+cv.out.ridge<-cv.glmnet(xTrain.Full, yTrain.Full, alpha=0)
+plot(cv.out.ridge)
+bestLam.ridge<-cv.out.ridge$lambda.min
+bestLam.ridge
+## Note that Lambda=0 corresponds to ordinary least squares regression so best lambda=0.0877 isn't that much different
+ridge.mod=glmnet(xTrain.Full, yTrain.Full, alpha=0, lambda=grid, thresh=1e-12)
+ridge.pred=predict(ridge.mod, s=bestLam.ridge, newx = xTest.Full)
+ridge.MSE=mean((ridge.pred-yTest.Full)^2)
+ridge.results=data.frame(
+  R2 = caret::R2(ridge.pred, yTest.Full),
+  RMSE = RMSE(ridge.pred, yTest.Full),
+  MSE = (RMSE(ridge.pred, yTest.Full)^2),
+  MAE = MAE(ridge.pred, yTest.Full)
+)
+colnames(ridge.results)<-c("R2","RMSE", "MSE", "MAE")
+## Coefficent Estimates
+out.ridge=glmnet(xTrain.Full,yTrain.Full,alpha = 0)
+ridge.coef=predict(out.ridge, type="coefficients", s=bestLam.ridge)[1:51,]
+
+```
+
+## Lasso Regression
+
+```{r, results='hide'}
+set.seed(123)
+## Find best Lambda using cross validation
+cv.out.lasso<-cv.glmnet(xTrain.Full, yTrain.Full, alpha=1)
+plot(cv.out.lasso)
+bestLam.lasso=cv.out.lasso$lambda.min
+bestLam.lasso
+lasso.mod=glmnet(xTrain.Full, yTrain.Full, alpha=1, lambda=grid, thresh=1e-12)
+lasso.pred=predict(lasso.mod, s=bestLam.lasso, newx=xTest.Full)
+lasso.MSE=mean((lasso.pred-yTest.Full)^2)
+lasso.results=data.frame(
+  R2 = caret::R2(lasso.pred, yTest.Full),
+  RMSE = RMSE(lasso.pred, yTest.Full),
+  MSE = (RMSE(lasso.pred, yTest.Full)^2),
+  MAE = MAE(lasso.pred, yTest.Full)
+)
+colnames(lasso.results)<-c("R2","RMSE", "MSE", "MAE")
+out.lasso=glmnet(xTrain.Full, yTrain.Full, alpha=1, lambda=grid)
+lasso.coef<-predict(out.lasso, type="coefficients", s=bestLam.lasso)[1:51,]
+## Coefficients shrunk to zero:
+shrunkCoefs<-lasso.coef[lasso.coef==0]
+shrunkCoefs
+length(shrunkCoefs)
+
+```
+
+## Partial Least Squares
+
+```{r, results='hide'}
+set.seed(123)
+library(pls)
+pls.mod=plsr(povPropCol~., data=Train.Std, scale=TRUE, validation="CV")
+summary(pls.mod)
+validationplot(pls.mod, val.type = "MSEP", legendpos = "topright", main="Mean Square Error Prediction vs. Number of Components")
+
+pls.cv = RMSEP(pls.mod)
+pls.best.dims = which.min(pls.cv$val[estimate = "adjCV", , ]) - 1
+pls.best.dims
+abline(v=pls.best.dims)
+pls.pred=predict(pls.mod, xTest.Full, ncomp = pls.best.dims)
+
+pls.results=data.frame(
+  R2 = caret::R2(pls.pred, yTest.Full),
+  RMSE = RMSE(pls.pred, yTest.Full),
+  MSE = (RMSE(pls.pred, yTest.Full)^2),
+  MAE = MAE(pls.pred, yTest.Full)
+  
+)
+colnames(pls.results)<-c("R2","RMSE", "MSE", "MAE")
+```
+
+## Combine and Compare Results
+
+```{r results='hide'}
+predResults<-rbind(lmod.results, ridge.results, lasso.results, pls.results)
+rownames(predResults)<-c("OLS", "Ridge", "Lasso", "PLS")
+predResults
